@@ -1,4 +1,4 @@
-# 🛠️ KikoMine — Bot de Discord para Gerenciar Servidor Exaroton
+# 🛠️ KikoMine — Bot de Discord para Gerenciar Servidores Exaroton
 
 KikoMine é um bot de Discord desenvolvido em Python que permite gerenciar servidores de Minecraft hospedados na plataforma [Exaroton](https://exaroton.com/), diretamente do Discord. Ele oferece comandos para iniciar, parar, reiniciar o servidor e ajustar a quantidade de RAM alocada.
 
