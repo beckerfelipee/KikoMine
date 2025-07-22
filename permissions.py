@@ -1,4 +1,4 @@
-# roles-and-accesses.py
+# Configure permissions levels for your bot
 
 # Example of use:
 """
