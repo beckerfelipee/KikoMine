@@ -1,4 +1,4 @@
-# 🛠️ KikoMine — Discord Bot to Manage Exaroton Servers
+# 🛠️ Discord Bot to Manage Exaroton Servers
 
 KikoMine is a Discord bot developed in Python that allows you to manage Minecraft servers hosted on the [Exaroton](https://exaroton.com/) platform directly from Discord. It offers commands to start, stop, restart the server, and adjust the allocated RAM.
 
@@ -47,7 +47,7 @@ Commands organized with `discord.app_commands` (slash commands)
     python bot.py
 ```
 
-## 🧾 Available Commands
+## 🧾 Default Commands
 
 ### `/server`
 Displays the current status of the Minecraft server.
@@ -66,6 +66,8 @@ Shows the currently allocated RAM.
 
 ### `/ram set <value> [restart]`
 Sets a new amount of RAM (between 2 and 10 GB). Can restart automatically if needed.
+
+> You can easily create more commands by following the existing code structure.
 
 ### `/ram help`
 Displays help for RAM commands.
