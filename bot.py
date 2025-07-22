@@ -197,6 +197,7 @@ async def restart(interaction: discord.Interaction):
         await interaction.response.send_message(
             "⚠️ The server is Offline. Use `/start` to start it.")
 
+# You can create additional commands using the same structure and the exa. methods to interact with exaroton server.
 
 """
 keep_alive = True
