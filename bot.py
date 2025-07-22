@@ -4,6 +4,8 @@ import asyncio
 from dotenv import load_dotenv
 from exaroton import Exaroton
 from discord import app_commands
+from roles_and_accesses import admin_users, admin_roles, info_roles
+
 
 # Load environment variables
 load_dotenv()
