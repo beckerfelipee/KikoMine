@@ -22,6 +22,19 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 
+def has_permission(interaction: discord.Interaction, allowed_roles: list = [], allowed_users: list = []):
+    if not allowed_roles and not allowed_users:
+            return True # Because all users has permission in that case
+    
+    user_id = interaction.user.id
+    user_roles = [role.id for role in interaction.user.roles]
+
+    if user_id in allowed_users:
+        return True
+
+    return any(role_id in allowed_roles for role_id in user_roles)
+
+
 # Wait for desired status
 async def wait_for_status(desired_status, check_interval=3):
     while True:
@@ -40,6 +53,7 @@ class RamGroup(app_commands.Group):
     @app_commands.command(name="get",
                           description="Displays the server's current RAM")
     async def get(self, interaction: discord.Interaction):
+        
         ram = exa.get_server_ram(SERVER_ID)
         await interaction.response.send_message(
             f"📦 Current server RAM: `{ram} GB`")
