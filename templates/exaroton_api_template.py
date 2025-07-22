@@ -11,17 +11,15 @@ exa = Exaroton(api_token)
 
 server_id = "EXAMPLEID2O13O214J"
 
-exa.get_server_logs(server_id)
-
 server_info = exa.get_server(server_id)
 print(server_info)
 """
 {
     "_": "Server",
-    "id": "GWQI2TAtLCpj7FhO",
-    "name": "GND_ATM9TTS",
-    "address": "GND_ATM9TTS.exaroton.me",
-    "motd": "\u00a7f\u00a7lAllTheMods9: To the Sky server",
+    "id": "EXAMPLEID2O13O214J",
+    "name": "EXAMPLE_NAME",
+    "address": "EXAMPLE_NAME.exaroton.me",
+    "motd": "\u00a7f\u00a7lExample motd!",
     "status": "Offline",
     "port": 48245,
     "players": {
@@ -32,32 +30,10 @@ print(server_info)
     },
     "software": {
         "_": "Software",
-        "id": "Flt6RsflglDPDJ0q",
+        "id": "Example_Software_ID12314",
         "name": "Forge",
         "version": "1.20.1 (47.4.0)"
     },
     "shared": false
 }
-"""
-
-print()
-
-server_ram = exa.get_server_ram(server_id)
-print(server_ram)
-"""
-5
-"""
-
-#server_ram = exa.set_server_ram(server_id, 5)
-#print(server_ram)
-
-"""
-status = exa.start(server_id)
-print(status)
-
-status = exa.restart(server_id)
-print(status)
-
-status = exa.stop(server_id)
-print(status)
 """
