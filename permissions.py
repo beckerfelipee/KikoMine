@@ -1,13 +1,13 @@
-# Configure permissions levels for your bot
+# Configure discord permissions levels for the bot usage
 
 # Example of use:
 """
 admin_users = [
-    "123456789012345678",  # Example user ID
+    "123456789012345678",  # Example Discord user ID
     # Add more user IDs here
 ]
 
-admin_role = "123456789012345678" # Example role ID
+admin_role = "123456789012345678" # Example Discord role ID
 """
 
 # List of user IDs with full admin access to all commands including admin-level commands (e.g., /ram set, /restart) 
