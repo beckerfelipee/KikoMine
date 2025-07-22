@@ -4,7 +4,7 @@ import asyncio
 from dotenv import load_dotenv
 from exaroton import Exaroton
 from discord import app_commands
-from roles_and_accesses import admin_users, admin_role, info_role
+from permissions import admin_users, admin_role, info_role
 
 
 # Load environment variables
@@ -77,7 +77,7 @@ class RamGroup(app_commands.Group):
 
         if not has_permission(interaction, allowed_roles=allowed_roles):
             await interaction.response.send_message("🚫 You don't have permission to use this command.", ephemeral=True)
-        return
+            return
         
         help_msg = (
             "`/ram get` → Shows current RAM\n"
@@ -108,7 +108,7 @@ class RamGroup(app_commands.Group):
 
         if not has_permission(interaction, allowed_roles=allowed_roles, allowed_users=allowed_users):
             await interaction.response.send_message("🚫 You don't have permission to use this command.", ephemeral=True)
-        return
+            return
                       
         ram = exa.get_server_ram(SERVER_ID)
 
@@ -188,7 +188,7 @@ async def server(interaction: discord.Interaction):
 
     if not has_permission(interaction, allowed_roles=allowed_roles):
         await interaction.response.send_message("🚫 You don't have permission to use this command.", ephemeral=True)
-    return
+        return
 
     server = exa.get_server(SERVER_ID)
     status_emoji = {"Online": "🟢", "Offline": "🔴"}.get(server.status, "⚙️")
@@ -210,7 +210,7 @@ async def start(interaction: discord.Interaction):
 
     if not has_permission(interaction, allowed_roles=allowed_roles, allowed_users=allowed_users):
         await interaction.response.send_message("🚫 You don't have permission to use this command.", ephemeral=True)
-    return
+        return
 
     server = exa.get_server(SERVER_ID)
     if server.status == "Offline":
@@ -236,7 +236,7 @@ async def stop(interaction: discord.Interaction):
 
     if not has_permission(interaction, allowed_roles=allowed_roles, allowed_users=allowed_users):
         await interaction.response.send_message("🚫 You don't have permission to use this command.", ephemeral=True)
-    return
+        return
 
     server = exa.get_server(SERVER_ID)
     if server.status != "Offline":
@@ -259,7 +259,7 @@ async def restart(interaction: discord.Interaction):
 
     if not has_permission(interaction, allowed_roles=allowed_roles, allowed_users=allowed_users):
         await interaction.response.send_message("🚫 You don't have permission to use this command.", ephemeral=True)
-    return
+        return
 
     server = exa.get_server(SERVER_ID)
     if server.status != "Offline":
