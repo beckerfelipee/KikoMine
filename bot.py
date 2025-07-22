@@ -145,9 +145,8 @@ async def server(interaction: discord.Interaction):
     status_emoji = {"Online": "🟢", "Offline": "🔴"}.get(server.status, "⚙️")
     await interaction.response.send_message(
         f"━━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"   🖥️ **Minecraft ATM 9 Server**\n"
+        f"   🖥️ **Minecraft {server.name} Server**\n"
         f"━━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"🌍 **Name:** `{server.name}`\n"
         f"📡 **Status:** {status_emoji} `{server.status}`\n"
         f"📌 **Address:**\n```{server.address}:{server.port}```")
 
@@ -210,7 +209,7 @@ if keep_alive:
 
     @app.route('/')
     def home():
-        return "✅ KikoMine está online!"
+        return "✅ Discord bot is online!"
 
     def run_web():
         app.run(host='0.0.0.0', port=8080)
