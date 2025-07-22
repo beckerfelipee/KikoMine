@@ -19,7 +19,7 @@ Commands organized with `discord.app_commands` (slash commands)
 
 ## 📦 Requirements
 
-- Python 3.8+
+- Python 3.10+
 - An account on [Exaroton](https://exaroton.com/)
 - A configured Minecraft server on Exaroton
 - A registered Discord bot with a token
