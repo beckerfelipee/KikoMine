@@ -1,67 +1,71 @@
-# 🛠️ KikoMine — Bot de Discord para Gerenciar Servidores Exaroton
+# 🛠️ KikoMine — Discord Bot to Manage Exaroton Servers
 
-KikoMine é um bot de Discord desenvolvido em Python que permite gerenciar servidores de Minecraft hospedados na plataforma [Exaroton](https://exaroton.com/), diretamente do Discord. Ele oferece comandos para iniciar, parar, reiniciar o servidor e ajustar a quantidade de RAM alocada.
+KikoMine is a Discord bot developed in Python that allows you to manage Minecraft servers hosted on the [Exaroton](https://exaroton.com/) platform directly from Discord. It offers commands to start, stop, restart the server, and adjust the allocated RAM.
 
-## 🚀 Funcionalidades
+## 🚀 Features
 
-- 🔍 Verificar status do servidor
-- ▶️ Iniciar servidor
-- ⏹️ Parar servidor
-- 🔁 Reiniciar servidor
-- 📦 Ver e alterar a quantidade de RAM alocada
-- 🧠 Comandos organizados com `discord.app_commands` (slash commands)
+- 🔍 Check server status
+- ▶️ Start server
+- ⏹️ Stop server
+- 🔁 Restart server
+- 📦 View and change allocated RAM
+- 🧠 Commands organized with `discord.app_commands` (slash commands)
 
-## 📦 Requisitos
+## 📦 Requirements
 
 - Python 3.8+
-- Conta na [Exaroton](https://exaroton.com/)
-- Um servidor de Minecraft configurado na Exaroton
-- Um bot de Discord registrado com token
+- An account on [Exaroton](https://exaroton.com/)
+- A configured Minecraft server on Exaroton
+- A registered Discord bot with a token
 
-## 🧪 Instalação
+## 🧪 Installation
 
-1. Clone o repositório:
+1. Clone the repository:
 ``` git
-    git clone https://github.com/seu-usuario/kikomine-bot.git
+    git clone https://github.com/your-username/kikomine-bot.git
     cd kikomine-bot
 ```
-2. Instale as dependências:
+
+2. Install the dependencies:
 ``` bash
     pip install -r requirements.txt
 ```
-3. Crie um arquivo `.env` com as seguintes variáveis:
+
+3. Create a `.env` file with the following variables:
 ``` bash
-    DISCORD_BOT_TOKEN=seu_token_do_discord
-    EXAROTON_API_TOKEN=seu_token_da_exaroton
-    SERVER_ID=id_do_seu_servidor
+    DISCORD_BOT_TOKEN=your_discord_token
+    EXAROTON_API_TOKEN=your_exaroton_token
+    SERVER_ID=your_server_id
 ```
-4. Execute o bot:
+
+4. Run the bot:
 ``` python
     python bot.py
 ```
-## 🧾 Comandos Disponíveis
+
+## 🧾 Available Commands
 
 ### `/server`
-Exibe o status atual do servidor Minecraft.
+Displays the current status of the Minecraft server.
 
 ### `/start`
-Inicia o servidor.
+Starts the server.
 
 ### `/stop`
-Desliga o servidor.
+Stops the server.
 
 ### `/restart`
-Reinicia o servidor.
+Restarts the server.
 
 ### `/ram get`
-Mostra a quantidade atual de RAM alocada.
+Shows the currently allocated RAM.
 
-### `/ram set <valor> [restart]`
-Define uma nova quantidade de RAM (entre 2 e 10 GB). Pode reiniciar automaticamente, se necessário.
+### `/ram set <value> [restart]`
+Sets a new amount of RAM (between 2 and 10 GB). Can restart automatically if needed.
 
 ### `/ram help`
-Exibe ajuda sobre os comandos de RAM.
+Displays help for RAM commands.
 
-## 📄 Licença
+## 📄 License
 
-Este projeto é open-source e está licenciado sob a [MIT License](LICENSE).
+This project is open-source and licensed under the [MIT License](LICENSE).
