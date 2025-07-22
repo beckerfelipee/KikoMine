@@ -9,7 +9,7 @@ from exaroton import Exaroton
 api_token = os.getenv("EXAROTON_API_TOKEN")
 exa = Exaroton(api_token)
 
-server_id = "GWQI2TAtLCpj7FhO"
+server_id = "EXAMPLEID2O13O214J"
 
 exa.get_server_logs(server_id)
 
