@@ -26,8 +26,8 @@ Commands organized with `discord.app_commands` (slash commands)
 
 1. Clone the repository:
 ``` git
-    git clone https://github.com/your-username/kikomine-bot.git
-    cd kikomine-bot
+    git clone https://github.com/beckerfelipee/kikomine.git
+    cd kikomine
 ```
 
 2. Install the dependencies:
