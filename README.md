@@ -12,6 +12,7 @@ KikoMine is a Discord bot developed in Python that allows you to manage Minecraf
 - ⏹️ | Stop server
 - 🔁 | Restart server
 - 📦 | View and change allocated RAM
+and more..
 
 Commands organized with `discord.app_commands` (slash commands)
 
