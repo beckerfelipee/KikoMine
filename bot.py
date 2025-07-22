@@ -5,22 +5,22 @@ from dotenv import load_dotenv
 from exaroton import Exaroton
 from discord import app_commands
 
-# Carrega variáveis de ambiente
+# Load environment variables
 load_dotenv()
 DISCORD_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 EXAROTON_TOKEN = os.getenv("EXAROTON_API_TOKEN")
 SERVER_ID = os.getenv("SERVER_ID")
 
-# Inicializa cliente Exaroton
+# Initialize Exaroton client
 exa = Exaroton(EXAROTON_TOKEN)
 
-# Cria cliente Discord com intents e árvore de comandos
+# Create Discord client with intents and command tree
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 
-# Espera por status desejado
+# Wait for desired status
 async def wait_for_status(desired_status, check_interval=3):
     while True:
         status = exa.get_server(SERVER_ID).status
@@ -32,37 +32,37 @@ async def wait_for_status(desired_status, check_interval=3):
 class RamGroup(app_commands.Group):
 
     def __init__(self):
-        super().__init__(name="ram", description="Gerencia a RAM do servidor")
+        super().__init__(name="ram", description="Manages the server's RAM")
 
     # /ram get
     @app_commands.command(name="get",
-                          description="Mostra a RAM atual do servidor")
+                          description="Displays the server's current RAM")
     async def get(self, interaction: discord.Interaction):
         ram = exa.get_server_ram(SERVER_ID)
         await interaction.response.send_message(
-            f"📦 RAM atual do servidor: `{ram} GB`")
+            f"📦 Current server RAM: `{ram} GB`")
 
     # /ram help
     @app_commands.command(name="help",
-                          description="Exibe ajuda sobre o comando de RAM")
+                          description="Displays help for the RAM command")
     async def help(self, interaction: discord.Interaction):
         help_msg = (
-            "`/ram get` → Mostra a RAM atual\n"
-            "`/ram help` → Exibe esta ajuda\n"
-            "`/ram set <valor>` → Define nova RAM\n"
-            "`/ram set <valor> <restart>` → Altera RAM e reinicia o servidor\n\n"
-            "**Recomendações:**\n"
-            "🛋️ AFK/ocioso → `2 GB`\n"
-            "🎮 Jogando normalmente → `5 GB`\n"
-            "🚨 Lag ou travamentos → `6-10 GB`\n")
+            "`/ram get` → Shows current RAM\n"
+            "`/ram help` → Displays this help\n"
+            "`/ram set <value>` → Sets new RAM\n"
+            "`/ram set <value> <restart>` → Changes RAM and restarts the server\n\n"
+            "**Recommendations:**\n"
+            "🛋️ AFK/idle → `2 GB`\n"
+            "🎮 Normal gameplay → `5 GB`\n"
+            "🚨 Lag or stuttering → `6-10 GB`\n")
         await interaction.response.send_message(help_msg)
 
-    # /ram set <valor> [restart]
+    # /ram set <value> [restart]
     @app_commands.command(name="set",
-                          description="Define nova RAM (entre 2 e 10 GB)")
+                          description="Sets new RAM (between 2 and 10 GB)")
     @app_commands.describe(
-        valor="Nova quantidade de RAM (2 a 10 GB)",
-        restart="Reiniciar automaticamente após aplicar a mudança")
+        valor="New RAM amount (2 to 10 GB)",
+        restart="Automatically restart after applying the change")
     async def set(self,
                   interaction: discord.Interaction,
                   valor: int,
@@ -71,77 +71,75 @@ class RamGroup(app_commands.Group):
 
         if valor < 2 or valor > 10:
             await interaction.response.send_message(
-                "❌ Valor inválido. A RAM deve estar entre `2` e `10` GB.")
+                "❌ Invalid value. RAM must be between `2` and `10` GB.")
             return
 
         if valor == ram:
             await interaction.response.send_message(
-                f"👌 A RAM já está definida para `{ram} GB`. Nenhuma alteração necessária."
-            )
+                f"👌 RAM is already set to `{ram} GB`. No changes needed.")
             return
 
         if not restart:
             try:
                 exa.set_server_ram(SERVER_ID, valor)
                 await interaction.response.send_message(
-                    f"✅ RAM alterada para `{valor} GB`. Inicie o servidor para aplicar."
+                    f"✅ RAM changed to `{valor} GB`. Start the server to apply."
                 )
             except Exception:
                 await interaction.response.send_message(
-                    "⚠️ Não foi possível aplicar a RAM agora. Tente novamente com `restart: true` ou desligue o servidor."
+                    "⚠️ Could not apply RAM now. Try again with `restart: true` or stop the server."
                 )
             return
 
         server = exa.get_server(SERVER_ID)
         await interaction.response.send_message(
-            f"🔄 Alterando RAM para `{valor} GB` e reiniciando o servidor...")
+            f"🔄 Changing RAM to `{valor} GB` and restarting the server...")
 
         if server.status != "Offline":
             await interaction.followup.send(
-                "🛑 Parando o servidor para alterar a RAM...")
+                "🛑 Stopping the server to change RAM...")
             exa.stop(SERVER_ID)
             await wait_for_status("Offline")
 
-        # Após garantir que está offline, aplicar a RAM
+        # After ensuring it's offline, apply RAM
         try:
             await interaction.followup.send(
-                f"⚙️ Alterando RAM para `{valor} GB`...")
+                f"⚙️ Changing RAM to `{valor} GB`...")
             exa.set_server_ram(SERVER_ID, valor)
 
-            # Verifica se o servidor estava online antes
+            # Check if the server was online before
             if server.status != "Offline":
                 await interaction.followup.send(
-                    "🚀 Iniciando o servidor novamente... \nIsso pode levar alguns minutos."
+                    "🚀 Restarting the server... \nThis may take a few minutes."
                 )
                 exa.start(SERVER_ID)
                 await wait_for_status("Online")
                 await interaction.followup.send(
-                    "✅ Servidor iniciado com nova configuração de RAM.")
+                    "✅ Server started with new RAM configuration.")
             else:
                 await interaction.followup.send(
-                    "✅ RAM alterada com sucesso \n⚠️ O servidor está Offline. Use `/start` para iniciá-lo."
+                    "✅ RAM successfully changed \n⚠️ The server is Offline. Use `/start` to start it."
                 )
         except Exception as e:
             await interaction.followup.send(
-                f"❌ Erro ao configurar a RAM: `{e}`")
+                f"❌ Error setting RAM: `{e}`")
 
 
-# Adiciona o grupo de comandos RAM à árvore
+# Add RAM command group to the tree
 tree.add_command(RamGroup())
 
 
-# Evento de pronto
+# Ready event
 @client.event
 async def on_ready():
 
-    await tree.sync()  # sincroniza os comandos com o Discord
-    await tree.sync(guild=None
-                    )  # limpa comandos antigos da aplicação globalmente
-    print(f"✅ Bot {client.user.name} está online e comandos sincronizados!")
+    await tree.sync()  # sync commands with Discord
+    await tree.sync(guild=None)  # clear old global application commands
+    print(f"✅ Bot {client.user.name} is online and commands are synced!")
 
 
 # /server
-@tree.command(name="server", description="Exibe o status atual do servidor")
+@tree.command(name="server", description="Displays the current server status")
 async def server(interaction: discord.Interaction):
     server = exa.get_server(SERVER_ID)
     status_emoji = {"Online": "🟢", "Offline": "🔴"}.get(server.status, "⚙️")
@@ -149,55 +147,56 @@ async def server(interaction: discord.Interaction):
         f"━━━━━━━━━━━━━━━━━━━━━━━\n"
         f"   🖥️ **Minecraft ATM 9 Server**\n"
         f"━━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"🌍 **Nome:** `{server.name}`\n"
+        f"🌍 **Name:** `{server.name}`\n"
         f"📡 **Status:** {status_emoji} `{server.status}`\n"
-        f"📌 **Endereço:**\n```{server.address}:{server.port}```")
+        f"📌 **Address:**\n```{server.address}:{server.port}```")
 
 
 # /start
-@tree.command(name="start", description="Inicia o servidor")
+@tree.command(name="start", description="Starts the server")
 async def start(interaction: discord.Interaction):
     server = exa.get_server(SERVER_ID)
     if server.status == "Offline":
         await interaction.response.send_message(
-            "🔄 Iniciando o servidor... \nIsso pode levar alguns minutos.")
+            "🔄 Starting the server... \nThis may take a few minutes.")
         exa.start(SERVER_ID)
         await wait_for_status("Online")
-        await interaction.followup.send("✅ Servidor iniciado com sucesso!")
+        await interaction.followup.send("✅ Server started successfully!")
     elif server.status == "Online":
-        await interaction.response.send_message("🟢 O servidor já está online.")
+        await interaction.response.send_message("🟢 The server is already online.")
     else:
         await interaction.response.send_message(
-            f"⏳ O servidor está no seguinte estado: {server.status}")
+            f"⏳ The server is currently in the following state: {server.status}")
 
 
 # /stop
-@tree.command(name="stop", description="Desliga o servidor")
+@tree.command(name="stop", description="Stops the server")
 async def stop(interaction: discord.Interaction):
     server = exa.get_server(SERVER_ID)
     if server.status != "Offline":
-        await interaction.response.send_message("🛑 Encerrando o servidor...")
+        await interaction.response.send_message("🛑 Shutting down the server...")
         exa.stop(SERVER_ID)
         await wait_for_status("Offline")
-        await interaction.followup.send("👍 Servidor encerrado com sucesso.")
+        await interaction.followup.send("👍 Server shut down successfully.")
     else:
         await interaction.response.send_message(
-            "⚠️ O servidor já está desligado.")
+            "⚠️ The server is already offline.")
 
 
 # /restart
-@tree.command(name="restart", description="Reinicia o servidor")
+@tree.command(name="restart", description="Restarts the server")
 async def restart(interaction: discord.Interaction):
     server = exa.get_server(SERVER_ID)
     if server.status != "Offline":
         await interaction.response.send_message(
-            "🔁 Reiniciando o servidor... \nIsso pode levar alguns minutos.")
+            "🔁 Restarting the server... \nThis may take a few minutes.")
         exa.restart(SERVER_ID)
         await wait_for_status("Online")
-        await interaction.followup.send("✅ Servidor reiniciado.")
+        await interaction.followup.send("✅ Server restarted.")
     else:
         await interaction.response.send_message(
-            "⚠️ O servidor está Offline. Use `/start` para iniciá-lo.")
+            "⚠️ The server is Offline. Use `/start` to start it.")
+
 
 """
 keep_alive = True
