@@ -24,15 +24,25 @@ tree = app_commands.CommandTree(client)
 
 def has_permission(interaction: discord.Interaction, allowed_roles: list = [], allowed_users: list = []):
     if not allowed_roles and not allowed_users:
+        print("No specific permissions set, allowing all users.")
         return True # Because all users has permission in that case
     
-    user_id = interaction.user.id
-    user_roles = [role.id for role in interaction.user.roles]
+    print(f"Allowed roles: {allowed_roles} \nAllowed users: {allowed_users}")
 
+    user_id = interaction.user.id
+    print(f"User ID: {user_id}")
     if user_id in allowed_users:
+        print("User has permission based on user ID.")
         return True
 
-    return any(role_id in allowed_roles for role_id in user_roles)
+    try:
+        user_roles = [role.id for role in interaction.user.roles]
+        print(f"User roles: {user_roles}")
+        print(any(role_id in allowed_roles for role_id in user_roles))
+        return any(role_id in allowed_roles for role_id in user_roles)
+    except AttributeError: # If roles are not available, assume no roles
+        print("User roles not available, returning False.")
+        return False
 
 
 # Wait for desired status
