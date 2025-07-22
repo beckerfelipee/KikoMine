@@ -4,7 +4,7 @@ import asyncio
 from dotenv import load_dotenv
 from exaroton import Exaroton
 from discord import app_commands
-from roles_and_accesses import admin_users, admin_roles, info_roles
+from roles_and_accesses import admin_users, admin_role, info_role
 
 
 # Load environment variables
@@ -24,7 +24,7 @@ tree = app_commands.CommandTree(client)
 
 def has_permission(interaction: discord.Interaction, allowed_roles: list = [], allowed_users: list = []):
     if not allowed_roles and not allowed_users:
-            return True # Because all users has permission in that case
+        return True # Because all users has permission in that case
     
     user_id = interaction.user.id
     user_roles = [role.id for role in interaction.user.roles]
@@ -49,19 +49,36 @@ class RamGroup(app_commands.Group):
     def __init__(self):
         super().__init__(name="ram", description="Manages the server's RAM")
 
+
     # /ram get
     @app_commands.command(name="get",
                           description="Displays the server's current RAM")
     async def get(self, interaction: discord.Interaction):
+
+        allowed_roles = [admin_role, info_role] if info_role else []
+        # Everyone is allowed if list is empty
+
+        if not has_permission(interaction, allowed_roles=allowed_roles):
+            await interaction.response.send_message("🚫 You don't have permission to use this command.", ephemeral=True)
+            return
         
         ram = exa.get_server_ram(SERVER_ID)
         await interaction.response.send_message(
             f"📦 Current server RAM: `{ram} GB`")
 
+
     # /ram help
     @app_commands.command(name="help",
                           description="Displays help for the RAM command")
     async def help(self, interaction: discord.Interaction):
+
+        allowed_roles = [admin_role, info_role] if info_role else []
+        # Everyone is allowed if list is empty
+
+        if not has_permission(interaction, allowed_roles=allowed_roles):
+            await interaction.response.send_message("🚫 You don't have permission to use this command.", ephemeral=True)
+        return
+        
         help_msg = (
             "`/ram get` → Shows current RAM\n"
             "`/ram help` → Displays this help\n"
@@ -73,33 +90,43 @@ class RamGroup(app_commands.Group):
             "🚨 Lag or stuttering → `6-10 GB`\n")
         await interaction.response.send_message(help_msg)
 
+
     # /ram set <value> [restart]
     @app_commands.command(name="set",
                           description="Sets new RAM (between 2 and 10 GB)")
     @app_commands.describe(
-        valor="New RAM amount (2 to 10 GB)",
+        value="New RAM amount (2 to 10 GB)",
         restart="Automatically restart after applying the change")
     async def set(self,
                   interaction: discord.Interaction,
-                  valor: int,
+                  value: int,
                   restart: bool = False):
+        
+        allowed_roles = [admin_role]
+        allowed_users = admin_users
+        # Everyone is allowed if allowed_roles and allowed_users is empty
+
+        if not has_permission(interaction, allowed_roles=allowed_roles, allowed_users=allowed_users):
+            await interaction.response.send_message("🚫 You don't have permission to use this command.", ephemeral=True)
+        return
+                      
         ram = exa.get_server_ram(SERVER_ID)
 
-        if valor < 2 or valor > 10:
+        if value < 2 or value > 10:
             await interaction.response.send_message(
                 "❌ Invalid value. RAM must be between `2` and `10` GB.")
             return
 
-        if valor == ram:
+        if value == ram:
             await interaction.response.send_message(
                 f"👌 RAM is already set to `{ram} GB`. No changes needed.")
             return
 
         if not restart:
             try:
-                exa.set_server_ram(SERVER_ID, valor)
+                exa.set_server_ram(SERVER_ID, value)
                 await interaction.response.send_message(
-                    f"✅ RAM changed to `{valor} GB`. Start the server to apply."
+                    f"✅ RAM changed to `{value} GB`. Start the server to apply."
                 )
             except Exception:
                 await interaction.response.send_message(
@@ -109,7 +136,7 @@ class RamGroup(app_commands.Group):
 
         server = exa.get_server(SERVER_ID)
         await interaction.response.send_message(
-            f"🔄 Changing RAM to `{valor} GB` and restarting the server...")
+            f"🔄 Changing RAM to `{value} GB` and restarting the server...")
 
         if server.status != "Offline":
             await interaction.followup.send(
@@ -120,8 +147,8 @@ class RamGroup(app_commands.Group):
         # After ensuring it's offline, apply RAM
         try:
             await interaction.followup.send(
-                f"⚙️ Changing RAM to `{valor} GB`...")
-            exa.set_server_ram(SERVER_ID, valor)
+                f"⚙️ Changing RAM to `{value} GB`...")
+            exa.set_server_ram(SERVER_ID, value)
 
             # Check if the server was online before
             if server.status != "Offline":
@@ -140,7 +167,6 @@ class RamGroup(app_commands.Group):
             await interaction.followup.send(
                 f"❌ Error setting RAM: `{e}`")
 
-
 # Add RAM command group to the tree
 tree.add_command(RamGroup())
 
@@ -148,7 +174,6 @@ tree.add_command(RamGroup())
 # Ready event
 @client.event
 async def on_ready():
-
     await tree.sync()  # sync commands with Discord
     await tree.sync(guild=None)  # clear old global application commands
     print(f"✅ Bot {client.user.name} is online and commands are synced!")
@@ -157,6 +182,14 @@ async def on_ready():
 # /server
 @tree.command(name="server", description="Displays the current server status")
 async def server(interaction: discord.Interaction):
+
+    allowed_roles = [admin_role, info_role] if info_role else []
+    # Everyone is allowed if list is empty
+
+    if not has_permission(interaction, allowed_roles=allowed_roles):
+        await interaction.response.send_message("🚫 You don't have permission to use this command.", ephemeral=True)
+    return
+
     server = exa.get_server(SERVER_ID)
     status_emoji = {"Online": "🟢", "Offline": "🔴"}.get(server.status, "⚙️")
     await interaction.response.send_message(
@@ -170,6 +203,15 @@ async def server(interaction: discord.Interaction):
 # /start
 @tree.command(name="start", description="Starts the server")
 async def start(interaction: discord.Interaction):
+
+    allowed_roles = [admin_role]
+    allowed_users = admin_users
+    # Everyone is allowed if allowed_roles and allowed_users is empty
+
+    if not has_permission(interaction, allowed_roles=allowed_roles, allowed_users=allowed_users):
+        await interaction.response.send_message("🚫 You don't have permission to use this command.", ephemeral=True)
+    return
+
     server = exa.get_server(SERVER_ID)
     if server.status == "Offline":
         await interaction.response.send_message(
@@ -187,6 +229,15 @@ async def start(interaction: discord.Interaction):
 # /stop
 @tree.command(name="stop", description="Stops the server")
 async def stop(interaction: discord.Interaction):
+
+    allowed_roles = [admin_role]
+    allowed_users = admin_users
+    # Everyone is allowed if allowed_roles and allowed_users is empty
+
+    if not has_permission(interaction, allowed_roles=allowed_roles, allowed_users=allowed_users):
+        await interaction.response.send_message("🚫 You don't have permission to use this command.", ephemeral=True)
+    return
+
     server = exa.get_server(SERVER_ID)
     if server.status != "Offline":
         await interaction.response.send_message("🛑 Shutting down the server...")
@@ -201,6 +252,15 @@ async def stop(interaction: discord.Interaction):
 # /restart
 @tree.command(name="restart", description="Restarts the server")
 async def restart(interaction: discord.Interaction):
+
+    allowed_roles = [admin_role]
+    allowed_users = admin_users
+    # Everyone is allowed if allowed_roles and allowed_users is empty
+
+    if not has_permission(interaction, allowed_roles=allowed_roles, allowed_users=allowed_users):
+        await interaction.response.send_message("🚫 You don't have permission to use this command.", ephemeral=True)
+    return
+
     server = exa.get_server(SERVER_ID)
     if server.status != "Offline":
         await interaction.response.send_message(
@@ -213,29 +273,6 @@ async def restart(interaction: discord.Interaction):
             "⚠️ The server is Offline. Use `/start` to start it.")
 
 # You can create additional commands using the same structure and the exa. methods to interact with exaroton server.
-
-"""
-keep_alive = True
-
-if keep_alive:
-    from flask import Flask
-    from threading import Thread
-
-    app = Flask('')
-
-    @app.route('/')
-    def home():
-        return "✅ Discord bot is online!"
-
-    def run_web():
-        app.run(host='0.0.0.0', port=8080)
-
-    def keep_alive():
-        thread = Thread(target=run_web)
-        thread.start()
-
-    keep_alive()
-"""
 
 # Inicia o bot
 client.run(DISCORD_TOKEN)
