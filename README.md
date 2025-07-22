@@ -29,7 +29,7 @@ Commands organized with `discord.app_commands` (slash commands)
 1. Clone the repository:
 ``` git
     git clone https://github.com/beckerfelipee/KikoMine.git
-    cd kikomine
+    cd KikoMine
 ```
 
 2. Install the dependencies:
