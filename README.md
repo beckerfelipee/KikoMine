@@ -67,10 +67,11 @@ Shows the currently allocated RAM.
 ### `/ram set <value> [restart]`
 Sets a new amount of RAM (between 2 and 10 GB). Can restart automatically if needed.
 
-> You can easily create more commands by following the existing code structure.
-
 ### `/ram help`
 Displays help for RAM commands.
+
+---
+> You can easily create more commands by following the existing code structure.
 
 ## 📄 License
 
